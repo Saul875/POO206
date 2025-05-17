@@ -7,3 +7,6 @@
 COMENTAR varias líneas"""
 #Un commit es un cambio registrado
 
+# 2. STRINGS
+print("Hola, soy una cadena")
+print('yo soy otra')
