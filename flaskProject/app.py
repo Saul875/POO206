@@ -1,16 +1,17 @@
 
-from flask import Flask, jsonify
+from flaskProject import Flask, jsonify, render_template, request, flash, redirect,url_for
 from flask_mysqldb import MySQL
 import MySQLdb
 
 
 app= Flask(__name__)
 
-app.config['MYSQL_Host']="localhost"
+app.config['MYSQL_HOST']="localhost"
 app.config['MYSQL_USER']="root"
 app.config['MYSQL_PASSWORD']="root"
-app.config['MYSQL_DB']="dbflask"
+app.config['MYSQL_DB']="DBFlask"
 #app.config['MYSQL_POR']="<puerto en el que se encuentra>"    (solo en caso de haber cambiado el puerto)
+app.config['SECRET_KEY']= 'HEILhitler'
 
 mysql= MySQL(app)
 #Ruta para revisar conexión a MYSQL
@@ -20,37 +21,52 @@ def DB_check():
         cursor = mysql.connection.cursor()
         cursor.execute('Select 1')
         return jsonify ({'status':'ok','message':'Concetado con exito'}),200
-    except Exception as e:
-        return jsonify ({'status':'ok','message': str(e)}),500 
+    except MySQLdb.MySQLError as e:
+        return jsonify ({'status':'error','message': str(e)}),500 
 
-
-#Ruta simple
+#Ruta de inicio
 @app.route('/')
 def home():
-    return 'hola mundo FLASK'
+    return render_template('formulario.html')
 
-#Ruta con parámetros
-@app.route('/saludo/<nombre>')
-def saludar(nombre):
-    return '<h1><marquee>Un saludo a ' + nombre + '</marquee></h1>'
+#Ruta de consulta
+@app.route('/consulta')
+def consulta():
+    return render_template('consulta.html')
+
+#Ruta de guardarAlbum
+@app.route('/guardarAlbum', methods=['POST'])
+def guardar():
+    #Obtener los datos a insertar
+    Vtitulo= request.form.get('txtTitulo','').strip()
+    Vartista= request.form.get('txtArtista','').strip()
+    Vanio= request.form.get('txtAnio','').strip()
+
+    #Intentamos Ejecutar el instert
+    try:
+        cursor= mysql.connection.cursor()
+        cursor.execute('insert into albumss(titulo,artista,anio) values(%s,%s,%s)',(Vtitulo,Vartista,Vanio))
+        mysql.connection.commit()
+        flash('Guardado en BD')
+        return redirect(url_for('home'))
+    
+    except Exception as e:
+        mysql.connection.rollback()
+        flash('Algo fallo: '+ str(e))
+
+    finally:
+        cursor.close()
+    return render_template('formulario.html')
+
+# #Ruta con parámetros
+# @app.route('/saludo/<nombre>')
+# def saludar(nombre):
+#     return '<h1><marquee>Un saludo a ' + nombre + '</marquee></h1>'
 
 #Ruta try catch
 @app.errorhandler(404)
 def pagNoE(e):
     return 'La princesa está en otro castillo', 404
 
-#ruta doble
-@app.route('/usuario')
-@app.route('/usuaria')
-def doubleroute():
-    return 'Soy el mismo recurso del servidor'
-
-#ruta POST
-@app.route('/formulario', methods=['POST'])
-def formulario():
-    return 'Soy un formulario'
-
 if __name__ == '__main__':
     app.run(port=3000,debug=True) 
-    
-    
