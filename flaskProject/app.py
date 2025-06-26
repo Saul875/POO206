@@ -1,5 +1,5 @@
 
-from flaskProject import Flask, jsonify, render_template, request, flash, redirect,url_for
+from flask import Flask, jsonify, render_template, request, flash, redirect,url_for
 from flask_mysqldb import MySQL
 import MySQLdb
 
@@ -27,7 +27,19 @@ def DB_check():
 #Ruta de inicio
 @app.route('/')
 def home():
-    return render_template('formulario.html')
+    try:
+        cursor= mysql.connection.cursor()
+        cursor.execute('SELECT * From albumss')
+        consultaTodo= cursor.fetchall()
+        return render_template('formulario.html', errores={},albums=consultaTodo)
+
+    except Exception as e:
+        print('Error al consultar todo '+ e)
+        return render_template('formulario.html', errores ={},albums=[])
+
+    finally:
+        cursor.close()
+
 
 #Ruta de consulta
 @app.route('/consulta')
@@ -42,7 +54,7 @@ def guardar():
     Vartista= request.form.get('txtArtista','').strip()
     Vanio= request.form.get('txtAnio','').strip()
 
-    #Intentamos Ejecutar el instert
+#Intentamos Ejecutar el instert
     try:
         cursor= mysql.connection.cursor()
         cursor.execute('insert into albumss(titulo,artista,anio) values(%s,%s,%s)',(Vtitulo,Vartista,Vanio))
@@ -56,7 +68,25 @@ def guardar():
 
     finally:
         cursor.close()
-    return render_template('formulario.html')
+        
+    return render_template('formulario.html',errores={})
+
+@app.route('/detalle/<int:id>')
+def detalle(id):
+    try:
+        cursor= mysql.connection.cursor()
+        cursor.execute('SELECT * From albumss where id = %s', (id,))
+        consultaId= cursor.fetchone()
+        return render_template('consulta.html',albums=consultaId)
+    
+    except Exception as e:
+        print('Error al consultar por id: '+ e)
+        return redirect(url_for('home'))
+
+    finally:
+        cursor.close()
+
+        
 
 # #Ruta con parámetros
 # @app.route('/saludo/<nombre>')
