@@ -23,7 +23,7 @@
             {% endif%}
          {% endwith%}
 
-    <form action="/guardarAlbum" method="post">
+    <form action="/guardarAlbum" method="POST">
       <input type="text" name="txtTitulo" placeholder="Titulo">
       <input type="text" name="txtArtista" placeholder="Artista">
       <input type="text" name="txtAnio" placeholder="Año de publicación">
@@ -35,17 +35,18 @@
       <head>
          <tr>
             <td>Id:</td>
-            <td>Album</td>
+            <td>Album:</td>
+            <td>Detalles</td>
          </tr>
       </head>
 
       <body>
 
-         {%for alb in albums%}
+         {%for album in albums%}
          <tr>
-            <td>{{ alb.0 }}</td>
-            <td> <a href="/detalle/{{alb.0}}">{{ alb.1 }}</a></td>
-            <td></td>
+            <td>{{ album.0 }}</td>
+            <td>{{ album.1 }}</td>
+            <td> <a href="/detalle/{{album.0}}">Detalles</a></td>
          </tr>
          {%endfor%}
          

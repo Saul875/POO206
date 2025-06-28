@@ -34,7 +34,7 @@ def home():
         return render_template('formulario.html', errores={},albums=consultaTodo)
 
     except Exception as e:
-        print('Error al consultar todo '+ e)
+        print(f'Error al consultar todo {e}')
         return render_template('formulario.html', errores ={},albums=[])
 
     finally:
@@ -85,8 +85,44 @@ def detalle(id):
 
     finally:
         cursor.close()
-
         
+@app.route('/actualizarAlbum/<int:id>', methods=['GET'])
+def mostrar_actualizar(id):
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute('SELECT * FROM albumss WHERE id=%s', (id,))
+        album = cursor.fetchone()
+        return render_template('formUpdate.html', album=album)
+    except Exception as e:
+        flash('Error al cargar datos: ' + str(e))
+        return redirect(url_for('home'))
+    finally:
+        cursor.close()
+        
+@app.route('/actualizarAlbum/<int:id>', methods=['POST'])
+def actualizar(id):
+    Vtitulo = request.form.get('txtTitulo', '').strip()
+    Vartista = request.form.get('txtArtista', '').strip()
+    Vanio = request.form.get('txtAnio', '').strip()
+
+    if not Vtitulo or not Vartista or not Vanio:
+        flash('Todos los campos son obligatorios')
+        return redirect(url_for('mostrar_actualizar', id=id))
+
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute('UPDATE albumss SET titulo=%s, artista=%s, anio=%s WHERE id=%s', (Vtitulo, Vartista, Vanio, id))
+        mysql.connection.commit()
+        flash('Álbum actualizado correctamente')
+        return redirect(url_for('home'))
+    except Exception as e:
+        mysql.connection.rollback()
+        flash('Error al actualizar: ' + str(e))
+        return redirect(url_for('mostrar_actualizar', id=id))
+    finally:
+        cursor.close()
+
+
 
 # #Ruta con parámetros
 # @app.route('/saludo/<nombre>')

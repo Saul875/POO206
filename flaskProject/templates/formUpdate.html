@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Actualizar Álbum</title>
+</head>
+<body>
+    <h1>Actualizar Álbum</h1>
+    <form action="/actualizarAlbum/{{ album[0]}}" method="post">
+        <label>Título:</label>
+        <input type="text" name="txtTitulo" value="{{album[1]}}" ><br>
+
+        <label>Artista:</label>
+        <input type="text" name="txtArtista" value="{{album[2]}}" ><br>
+
+        <label>Año:</label>
+        <input type="number" name="txtAnio" value="{{album[3]}}" ><br>
+
+        <button type="submit">Guardar Cambios</button>
+    </form>
+    <br>
+    <a href="/">Volver al inicio</a>
+    {% with mensajes = get_flashed_messages() %}
+    {% if mensajes %}
+        {% for msj in mensajes %}
+            <p style="color:red;">{{ msj }}</p>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+</body>
+</html>
