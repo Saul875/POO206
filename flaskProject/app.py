@@ -29,7 +29,7 @@ def DB_check():
 def home():
     try:
         cursor= mysql.connection.cursor()
-        cursor.execute('SELECT * From albumss')
+        cursor.execute('SELECT * FROM albumss WHERE state = 1')
         consultaTodo= cursor.fetchall()
         return render_template('formulario.html', errores={},albums=consultaTodo)
 
@@ -39,7 +39,6 @@ def home():
 
     finally:
         cursor.close()
-
 
 #Ruta de consulta
 @app.route('/consulta')
@@ -75,7 +74,8 @@ def guardar():
 def detalle(id):
     try:
         cursor= mysql.connection.cursor()
-        cursor.execute('SELECT * From albumss where id = %s', (id,))
+        cursor.execute('SELECT * FROM albumss WHERE id = %s', (id,))
+
         consultaId= cursor.fetchone()
         return render_template('consulta.html',albums=consultaId)
     
@@ -122,7 +122,35 @@ def actualizar(id):
     finally:
         cursor.close()
 
+@app.route('/eliminar/<int:id>', methods = ['GET'])
+def mostrarEliminar(id):
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute('SELECT * FROM albumss WHERE id=%s', (id,))
+        album = cursor.fetchone()
+        if not album:
+            flash('Álbum no encontrado')
+            return redirect(url_for('home'))
+        return render_template('eliminar.html', album=album) 
+    except Exception as e:
+        flash('Algo falló: ' + str(e))
+        return redirect(url_for('home'))
+    finally:
+        cursor.close()
 
+@app.route('/eliminar/<int:id>', methods = ['POST'])
+def confirmarEliminar(id):
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute('UPDATE albumss SET state = 0 WHERE id=%s', (id,))
+        mysql.connection.commit()
+        flash('Álbum eliminado en BD')
+    except Exception as e:
+        mysql.connection.rollback()
+        flash('Algo falló: ' + str(e))
+    finally:
+        cursor.close()
+    return redirect(url_for('home'))
 
 # #Ruta con parámetros
 # @app.route('/saludo/<nombre>')
