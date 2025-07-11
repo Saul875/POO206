@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido a reseñas de restaurantes</title>
+</head>
+
+<body>
+    <h1>Reseñas de restaurantes</h1>
+    <br>
+    <form action="/" method="POST"></form>
+    <label for="restaurantes">Restaurantes:</label>
+    <input type="text" id="restaurante" name="restaurante" value="{{ restaurante if restaurantes else '' }}" >
+    <br>
+    <br>
+    <br>
+    <label for="tipo">Tipo de comida:</label>
+    <input type="text" id="tipo" name="tipo" value="{{ tipo if tipo else '' }}" >
+    <br>
+    <br>
+    <br>
+    <label for="comentario">Deje un comentario:</label>
+    <input type="text" id="comentario" name="comentario" value="{{ comentario if comentario else '' }}" >
+    <br>
+    <br>
+    <br>
+    <label for="calificacion">Califique su restaurante:</label>
+        <select id="calificacion" name="calificacion">
+            <option value="1" {{ 'selected' if calificacion and calificacion == 1 else '' }}>Muy malo</option>
+            <option value="2" {{ 'selected' if calificacion and calificacion == 2 else '' }}>Malo</option>
+            <option value="3" {{ 'selected' if calificacion and calificacion == 3 else '' }}>Meh</option>
+            <option value="4" {{ 'selected' if calificacion and calificacion == 4 else '' }}>Bueno</option>
+            <option value="5" {{ 'selected' if calificacion and calificacion == 5 else '' }}>Muy bueno</option>
+        </select>
+    </form>
+    <br>
+    <br>
+    <br>
+    <button type="submit" class="guardar">{{ 'Actualizar' if restaurantes else 'Agregar' }}</button>
+</body>
+</html>
