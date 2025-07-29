@@ -1,0 +1,65 @@
+<!-- <!DOCTYPE html>
+ <html lang="en">
+ <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario</title>
+ </head>
+ <body> -->
+{% extends 'plantilla.html' %}
+
+{% block body %}
+<div class="row">
+  <!-- Formulario para agregar álbum -->
+  <div class="col-md-5">
+    <form action="/guardarAlbum" method="POST" class="mb-4">
+      <input type="text" name="txtTitulo" placeholder="Título" class="form-control mb-2">
+      <input type="text" name="txtArtista" placeholder="Artista" class="form-control mb-2">
+      <input type="text" name="txtAnio" placeholder="Año de publicación" class="form-control mb-2">
+      <button type="submit" class="btn btn-primary">Guardar Álbum</button>
+    </form>
+  </div>
+
+  <!-- Lista de álbumes -->
+  <div class="col-md-7">
+    <h2 class="display-4 text-primary mt-5 mb-4">Vista de formulario</h2>
+    <a href="/" class="btn btn-link">Abrir vista formulario</a>
+    <a href="/consulta" class="btn btn-link">Abrir vista consulta</a>
+
+    <br><br>
+
+    {% with mensajes = get_flashed_messages() %}
+      {% if mensajes %}
+        {% for msj in mensajes %}
+          <h4 style="color: red">{{ msj }}</h4>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <br>
+
+    {% if albums %}
+      <table class="table table-bordered">
+        <thead class="thead-dark">
+          <tr>
+            <th>Id</th>
+            <th>Álbum</th>
+            <th>Detalles</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for album in albums %}
+          <tr>
+            <td>{{ album[0] }}</td>
+            <td>{{ album[1] }}</td>
+            <td><a href="/detalle/{{ album[0] }}">Detalles</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="text-muted">No hay álbumes disponibles para mostrar.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

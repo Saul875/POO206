@@ -1,0 +1,22 @@
+{% extends 'plantilla.html' %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="card border-danger">
+        <div class="card-body text-center">
+            <h1 class="text-danger mb-4">¿Seguro que eliminarás este álbum?</h1>
+
+            <form action="/eliminar/{{ album[0] }}" method="POST" class="mb-3">
+                <div class="form-group">
+                    <input type="text" class="form-control mb-2" value="{{ album[1] }}" disabled>
+                    <input type="text" class="form-control mb-2" value="{{ album[2] }}" disabled>
+                    <input type="number" class="form-control mb-3" value="{{ album[3] }}" disabled>
+                </div>
+
+                <button type="submit" class="btn btn-danger">Eliminar Álbum</button>
+                <a href="{{ url_for('albums.home') }}" class="btn btn-secondary ml-2">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
